@@ -1,0 +1,56 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity entrada is
+    port (
+        clk                : in  std_logic;
+        reset              : in  std_logic;
+        qm_busy            : in  std_logic; 
+        data_bit_in        : in  std_logic; 
+        next_bit_btn       : in  std_logic; 
+        
+        -- Saídas
+        qm_start           : out std_logic;
+        truth_table_out    : out std_logic_vector(15 downto 0);
+        current_bit_index  : out std_logic_vector(3 downto 0)
+    );
+end entity entrada;
+
+architecture behavioral of entrada is
+    signal s_truth_table_reg : std_logic_vector(15 downto 0) := (others => '0');
+    signal s_bit_index_reg   : integer range 0 to 15 := 0;
+    signal s_qm_start_pulse  : std_logic := '0';
+    
+    signal s_prev_next_btn   : std_logic := '0';
+    signal s_prev_load_start_btn : std_logic := '0';
+begin
+    qm_start <= s_qm_start_pulse;
+    truth_table_out <= s_truth_table_reg;
+ current_bit_index <= std_logic_vector(to_unsigned(s_bit_index_reg, 4));
+    
+    process(clk, reset)
+    begin
+        if reset = '1' then
+            s_truth_table_reg <= (others => '0');
+            s_bit_index_reg   <= 0;
+            s_qm_start_pulse  <= '0';
+            s_prev_next_btn   <= '0';
+        elsif rising_edge(clk) then
+            s_qm_start_pulse <= '0'; 
+
+            s_prev_next_btn <= next_bit_btn;
+            
+            if qm_busy = '0' then
+                if next_bit_btn = '1' and s_prev_next_btn = '0' then
+                    s_truth_table_reg(s_bit_index_reg) <= data_bit_in;
+                    if s_bit_index_reg = 15 then
+                        s_bit_index_reg <= 0;
+                    else
+                        s_bit_index_reg <= s_bit_index_reg + 1;
+                    end if;
+                end if;
+            end if;
+        end if;
+    end process;
+end architecture behavioral;

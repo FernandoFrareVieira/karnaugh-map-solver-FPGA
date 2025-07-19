@@ -1,0 +1,169 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.NUMERIC_STD.ALL;
+
+entity display is
+    port (
+        clk       : in  std_logic;
+        reset     : in  std_logic;
+        start     : in  std_logic; -- Era qm_done
+        next_char : in  std_logic; -- Era next_char_btn
+        terms     : in  std_logic_vector(63 downto 0); -- Era result_terms
+        num_terms : in  std_logic_vector(3 downto 0);  -- Era num_result_terms
+        HEX0      : out std_logic_vector(0 to 7)
+    );
+end entity display;
+
+architecture behavioral of display is
+
+    type T_BUILD_STATE is (S_IDLE, S_BUILDING, S_DONE_BUILDING);
+    
+    type display_char_type is record
+        char    : character;
+        is_neg  : boolean;
+    end record;
+    
+    type display_sequence_type is array (0 to 39) of display_char_type;
+
+    signal s_build_state      : T_BUILD_STATE := S_IDLE;
+    signal s_display_sequence : display_sequence_type;
+    signal s_display_idx      : integer range 0 to 39 := 0;
+    signal s_sequence_len     : integer range 0 to 40 := 0;
+    
+    signal s_build_term_idx   : integer range 0 to 8 := 0;
+    signal s_build_literal_idx: integer range 0 to 4 := 0;
+    signal s_build_seq_idx    : integer range 0 to 40 := 0;
+    
+    signal s_prev_next_char   : std_logic := '0'; -- Sinal renomeado para consistência
+
+begin
+
+    process(clk, reset)
+        variable term_vec       : std_logic_vector(7 downto 0);
+        variable term_num       : std_logic_vector(3 downto 0);
+        variable term_dash      : std_logic_vector(3 downto 0);
+        variable new_char       : display_char_type;
+        variable literal_char   : character; 
+    begin
+        if reset = '1' then
+            s_build_state <= S_IDLE;
+            s_build_term_idx <= 0;
+            s_build_literal_idx <= 0;
+            s_build_seq_idx <= 0;
+            s_sequence_len <= 0;
+        elsif rising_edge(clk) then
+            case s_build_state is
+                when S_IDLE =>
+                    if start = '1' then
+                        s_build_state <= S_BUILDING;
+                        s_build_term_idx <= 0;
+                        s_build_literal_idx <= 0;
+                        s_build_seq_idx <= 0;
+                    end if;
+
+                when S_BUILDING =>
+                    if s_build_term_idx < to_integer(unsigned(num_terms)) then
+                        term_vec  := terms(s_build_term_idx*8 + 7 downto s_build_term_idx*8);
+                        term_num  := term_vec(7 downto 4);
+                        term_dash := term_vec(3 downto 0);
+
+                        if s_build_literal_idx = 4 then 
+                            new_char := (char => '+', is_neg => false);
+                            s_display_sequence(s_build_seq_idx) <= new_char;
+                            s_build_seq_idx <= s_build_seq_idx + 1;
+                            s_build_term_idx <= s_build_term_idx + 1;
+                            s_build_literal_idx <= 0;
+                        else 
+                            case s_build_literal_idx is
+                                when 0 => literal_char := 'A';
+                                when 1 => literal_char := 'b';
+                                when 2 => literal_char := 'C';
+                                when 3 => literal_char := 'd';
+                                when others => literal_char := ' ';
+                            end case;
+
+                            if term_dash(3 - s_build_literal_idx) = '0' then 
+                                new_char := (char => literal_char, is_neg => (term_num(3 - s_build_literal_idx) = '0'));
+                                s_display_sequence(s_build_seq_idx) <= new_char;
+                                s_build_seq_idx <= s_build_seq_idx + 1;
+                            end if;
+                            
+                            s_build_literal_idx <= s_build_literal_idx + 1;
+                        end if;
+                    else
+                        s_build_state <= S_DONE_BUILDING;
+                        s_sequence_len <= s_build_seq_idx;
+                    end if;
+                
+                when S_DONE_BUILDING =>
+                    if start = '0' then
+                        s_build_state <= S_IDLE;
+                    end if;
+            end case;
+        end if;
+    end process;
+    
+    process(clk, reset)
+    begin
+        if reset = '1' then
+            s_display_idx <= 0;
+            s_prev_next_char <= '0';
+        elsif rising_edge(clk) then
+            s_prev_next_char <= next_char;
+            if s_build_state = S_DONE_BUILDING then
+                if next_char = '1' and s_prev_next_char = '0' then
+                    if s_sequence_len > 0 then
+                        if s_display_idx < s_sequence_len - 1 then
+                            s_display_idx <= s_display_idx + 1;
+                        else
+                            s_display_idx <= 0;
+                        end if;
+                    end if;
+                end if;
+            else
+                s_display_idx <= 0;
+            end if;
+        end if;
+    end process;
+
+    process(s_display_sequence, s_display_idx, s_build_state, num_terms, terms)
+    variable current_display_char : display_char_type;
+    variable char_pattern : std_logic_vector(0 to 6);
+    begin
+         if s_build_state /= S_DONE_BUILDING then
+              HEX0 <= (others => '1');
+         else
+              if to_integer(unsigned(num_terms)) = 0 then
+                    char_pattern := "0000001"; -- Represents 0
+                    HEX0(0 to 6) <= char_pattern;
+                    HEX0(7) <= '1'; 
+
+              elsif to_integer(unsigned(num_terms)) = 1 and terms(3 downto 0) = "1111" then
+                    char_pattern := "1001111"; -- Represents 1
+                    HEX0(0 to 6) <= char_pattern;
+                    HEX0(7) <= '1'; 
+                    
+              else
+                    current_display_char := s_display_sequence(s_display_idx);
+                    
+                    case current_display_char.char is
+                         when 'A'    => char_pattern := "0001000";
+                         when 'b'    => char_pattern := "1100000";
+                         when 'C'    => char_pattern := "0110001";
+                         when 'd'    => char_pattern := "1000010";
+                         when '+'    => char_pattern := "1000001";
+                         when others => char_pattern := "1111111";
+                    end case;
+                    
+                    HEX0(0 to 6) <= char_pattern; 
+                    
+                    if current_display_char.is_neg then
+                         HEX0(7) <= '0';
+                    else
+                         HEX0(7) <= '1';
+                    end if;
+              end if;
+         end if;
+    end process;
+
+end architecture behavioral;

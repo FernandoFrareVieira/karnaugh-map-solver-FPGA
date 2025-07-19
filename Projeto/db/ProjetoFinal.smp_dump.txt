@@ -1,0 +1,40 @@
+
+State Machine - |Top|display:display_inst|s_build_state
+Name s_build_state.S_DONE_BUILDING s_build_state.S_BUILDING s_build_state.S_IDLE 
+s_build_state.S_IDLE 0 0 0 
+s_build_state.S_BUILDING 0 1 1 
+s_build_state.S_DONE_BUILDING 1 0 1 
+
+State Machine - |Top|quine_mccluskey:qm_inst|current_state
+Name current_state.DONE_STATE current_state.FINALIZE_WRITE current_state.FINALIZE_LOOP current_state.FINALIZE_INIT current_state.CFC_UPDATE_LOOP current_state.CFC_UPDATE_INIT current_state.CFC_FIND_BEST_EVALUATE current_state.CFC_FIND_BEST_INNER_LOOP current_state.CFC_FIND_BEST_OUTER_LOOP current_state.CFC_FIND_BEST_OUTER_INIT current_state.CFC_CHECK_LOOP current_state.CFC_CHECK_INIT current_state.SEP_MARK_INNER_LOOP current_state.SEP_MARK_OUTER_LOOP current_state.SEP_MARK_INIT current_state.SEP_FIND_EVALUATE current_state.SEP_FIND_INNER_LOOP current_state.SEP_FIND_OUTER_LOOP current_state.SEP_INIT current_state.BCT_LOOP current_state.BCT_INIT current_state.COLLECT_AND_DECIDE current_state.C_PASS_FINISH current_state.C_ADD_NEW_PI current_state.C_CHECK_COMBINE current_state.C_LOOP_J current_state.C_LOOP_I current_state.C_PASS_INIT current_state.IE_LOOP current_state.IE_INIT current_state.IDLE 
+current_state.IDLE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+current_state.IE_INIT 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 
+current_state.IE_LOOP 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 
+current_state.C_PASS_INIT 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 
+current_state.C_LOOP_I 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 
+current_state.C_LOOP_J 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 
+current_state.C_CHECK_COMBINE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 
+current_state.C_ADD_NEW_PI 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 
+current_state.C_PASS_FINISH 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 
+current_state.COLLECT_AND_DECIDE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 
+current_state.BCT_INIT 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 
+current_state.BCT_LOOP 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 
+current_state.SEP_INIT 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.SEP_FIND_OUTER_LOOP 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.SEP_FIND_INNER_LOOP 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.SEP_FIND_EVALUATE 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.SEP_MARK_INIT 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.SEP_MARK_OUTER_LOOP 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.SEP_MARK_INNER_LOOP 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.CFC_CHECK_INIT 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.CFC_CHECK_LOOP 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.CFC_FIND_BEST_OUTER_INIT 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.CFC_FIND_BEST_OUTER_LOOP 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.CFC_FIND_BEST_INNER_LOOP 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.CFC_FIND_BEST_EVALUATE 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.CFC_UPDATE_INIT 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.CFC_UPDATE_LOOP 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.FINALIZE_INIT 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.FINALIZE_LOOP 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.FINALIZE_WRITE 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
+current_state.DONE_STATE 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 
