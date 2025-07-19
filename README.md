@@ -6,8 +6,6 @@
 Este projeto consiste na implementação de um sistema digital em uma placa FPGA DE10-Lite que resolve o problema de minimização de funções booleanas de 4 variáveis utilizando o algoritmo de Quine-McCluskey. O sistema é interativo, permitindo a entrada de uma tabela-verdade via chaves e botões, e exibe a expressão booleana mínima resultante em um display de 7 segmentos.
 
 ## Diagrama de Blocos
- diagrama aparecer, suba o arquivo `diagrama_blocos.png` para a raiz do seu repositório.)*
-
 A arquitetura do sistema é modular, facilitando o desenvolvimento e a depuração. A entidade de topo (`Top.vhd`) integra os módulos de entrada, processamento e exibição.
 
 <img src="Diagrama/diagrama_blocos.png" alt="Diagrama de Blocos do Projeto" width="1100"/>
